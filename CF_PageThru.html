@@ -1,0 +1,296 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<title>CF_PageThru v1.0.1 Tag Documentation</title>
+<META NAME="Author" CONTENT="Roy P. Johnston, Jr.">
+</HEAD>
+<BODY BGCOLOR="#FFFFFF" TEXT="#000000" LINK="blue" VLINK="purple" ALINK="purple" !BACKGROUND="">
+
+<h2>CF_PageThru v1.0.2 Tag Documentation</h2>
+<i>tag written by <a href="mailto:ihuj@yahoo.com">Roy P. Johnston, Jr.</a><br>
+Created June 4, 1999 - Updated Friday, February 28, 2003
+</i>
+<p>The most current version of this document is available at:
+<a href="http://www.johnstons.org/wdc/pub/cfusion/customtags/CF_PageThru/CF_PageThru.html">http://www.johnstons.org/wdc/pub/cfusion/customtags/CF_PageThru/CF_PageThru.html</a>
+<hr>
+<h4>Contents</h4>
+<ul>
+<li><a href="#s1">Description</a>
+<li><a href="#s2">Attributes</a>
+<li><a href="#s3">Returned Values</a>
+<li><a href="#s4">Error Values</a>
+<li><a href="#s5">Syntax</a>
+<li><a href="#s6">Sample Code</a>
+<li><a href="#s7">Hints &amp; Tips</a>
+<li><a href="#s8">Package Information &amp; Download</a>
+<li><a href="#support">Support</a>
+<li><a href="#s9">Version History</a>
+</ul>
+<hr>
+
+<a name="s1"></a>
+<h4>Description</h4>
+
+<B>CF_PageThru</B> aids in creating page-through navigation similar to what is found
+on search engines.  This is nice for breaking up large query results onto multiple
+pages.  <B>CF_PageThru</B> will calculate the first and last rows to be displayed on the current page of query output.
+In addition, <B>CF_PageThru</B> will create
+a navigational bar to page-through a multi-page query output.  Sample navigation looks like:
+
+<p>
+<font size="-1">Page&nbsp;</font> <A HREF="."><img src="lleft.gif" width="10" height="10" border=0 align="absmiddle" value="&lt;&lt;"></A>  <A HREF="."><img src="left.gif" width="10" height="10" border=0 align="absmiddle" value="&lt;"></A>  <B><font color="Red"> 3</font></B>  <A HREF="."> 4</A>  <A HREF="."> 5</A>  <A HREF="."> 6</A>  <A HREF="."> 7</A>  <A HREF="."><img src="right.gif" width="10" height="10" border=0 align="absmiddle" value="&gt;"></A>  <A HREF="."><img src="rright.gif" width="10" height="10" border=0 align="absmiddle" value="&gt;&gt;"></A> 
+
+<p>The red arrows are the Next Page/Previous Page buttons.  The double red arrows are the Next Page Group/Previous Page Group buttons.
+A page group is a full or partial set of all pages.
+The number of pages displayed in a page group is determined by the <CODE>PAGEGROUP</CODE> attribute.
+
+<a name="s2"></a>
+<h4>Attributes</h4>
+
+<table border="0" bgcolor="cornsilk" cellpadding="3">
+<tr valign="top" bgcolor="pink">
+<th>Attribute</th><th>Type</th><th>Description</th>
+</tr>
+
+<tr valign="top">
+<td>TOTALRECORDS="<i>integer</i>"</td>
+<td>Required</td>
+<td>Specifies the records returned (QueryName.RecordCount) by the query to be paged-through.</td>
+</tr>
+
+<tr valign="top">
+<td>CURRENTPAGE="<i>integer</i>"</td>
+<td>Required</td>
+<td>The current page in the query that is to be displayed.</td>
+</tr>
+
+<tr valign="top">
+<td>TEMPLATEURL="<i>URL Path</i>"</td>
+<td>Required</td>
+<td>The URL path of the template that is paging though the query.
+	This will usually be that same template that is calling CF_PageThru.
+	You can use the CGI variable <CODE>SCRIPT_NAME</CODE> to specify
+	the URL of the calling template.
+</td>
+</tr>
+
+<tr valign="top">
+<td>ADDEDPATH="<i>string</i>"</td>
+<td>Optional</td>
+<td>Additional URL parameters that will tacked on to the URLs of the navigation.
+	The parameter list must start with an ampersand (&amp;).
+</td>
+</tr>
+
+<tr valign="top">
+<td>DISPLAYCOUNT="<i>integer</i>"</td>
+<td>Optional</td>
+<td>Specifies the maximum number of records to be displayed per page.
+	The default is 25 records.
+</TD>
+</tr>
+
+<tr valign="top">
+<td>PAGEGROUP="<i>integer</i>"</td>
+<td>Optional</td>
+<td>The maximum number of numeric page links to be displayed at one time
+	in the page-through navigation.  Set PAGEGROUP="0" to turn page grouping off.
+	The default is 10 pages.
+</td>
+</tr>
+
+<tr valign="top">
+<td>IMAGEPATH="<i>URL Path</i>"</td>
+<td>Optional</td>
+<td>the URL path of the images to be used in the navigation.  This
+	includes buttons for Next/Previous and Next Group/Previous Group.
+	The default is "" (empty path) which results in using the URL directory of the current template
+	for images.  Set IMAGEPATH="NONE" to use hypertext buttons.
+</TD>
+</tr>
+
+<tr valign="top">
+<td>IMAGEHEIGHT="<i>integer</i>"</td>
+<td>Optional</td>
+<td>The height of all image buttons.  The default is 10 pixels.</td>
+</tr>
+
+<tr valign="top">
+<td>IMAGEWIDTH="<i>integer</i>"</td>
+<td>Optional</td>
+<td>The width of all image buttons.  The default is 10 pixels.</td>
+</tr>
+
+<tr valign="top">
+<td>HILITECOLOR="<i>hex code or color literal</i>"</td>
+<td>Optional</td>
+<td>The text color of the current highlighted page number in the page-through
+	navigation.  The default is "Red".</td>
+</tr>
+
+<tr valign="top">
+<td>PREVIOUSSTR="<I>string</I>"</td>
+<td>Optional</td>
+<td>The hyperlink text of the previous button.  The default is "&lt;".</TD>
+</tr>
+
+<tr valign="top">
+<td>NEXTSTR="<I>string</I>"</td>
+<td>Optional</td>
+<td>The hyperlink text of the next button.  The default is "&gt;".</TD>
+</tr>
+
+<tr valign="top">
+<td>PREVIOUSGROUPSTR="<I>string</I>"</td>
+<td>Optional</td>
+<td>The hyperlink text of the previous group button.  The default is "&lt;&lt;".</TD>
+</tr>
+
+<tr valign="top">
+<td>NEXTGROUPSTR="<I>string</I>"</td>
+<td>Optional</td>
+<td>The hyperlink text of the next group button.  The default is "&gt;&gt;".</TD>
+</tr>
+</table>
+
+<a name="s3"></a>
+<h4>Returned Values</h4>
+
+<table border="0" bgcolor="cornsilk" cellpadding="3">
+<tr valign="top" bgcolor="pink">
+<th>Variable</th><th>Description</th>
+</tr>
+
+<tr valign="top">
+<td>PT_StartRow</td>
+<td>The first row of the query to be displayed on the current page.</td>
+</tr>
+
+<tr valign="top">
+<td>PT_EndRow</td>
+<td>The last row of the query to be displayed on the current page.</td>
+</tr>
+
+<tr valign="top">
+<td>PT_PageThru</td>
+<td>Page-through navigation.  Output this variable wherever you want the page-through navigation
+	to be displayed.</td>
+</tr>
+
+<tr valign="top">
+<td>PT_ErrorCode</td>
+<td>Numeric error code that corresponds with the descriptive <CODE>PT_ErrorMessage</CODE>.</td>
+</tr>
+
+<tr valign="top">
+<td>PT_ErrorMessage</td>
+<td>Error message</td>
+</tr>
+</table>
+
+<a name="s4"></a>
+<h4>Error Values</h4>
+<pre>
+Code	Message
+0      	OK.
+1	The 'TotalRecords' parameter must be a positive integer.
+2	The 'DisplayCount' parameter must be an integer greater than zero.
+3	The 'PageGroup' parameter must be a positive integer.
+3	The 'CurrentPage' parameter must be an integer greater than zero.
+</pre>
+
+<a name="s5"></a>
+<h4>Syntax</h4>
+<p>Simple Form: <pre>&lt;CF_PAGETHRU TOTALRECORDS="#MyQuery.RecordCount#" CURRENTPAGE="#CurrentPage#" TEMPLATEURL="#SCRIPT_NAME#"&gt;</pre>
+
+<p>Advanced Form:
+<pre>&lt;CF_PAGETHRU TOTALRECORDS="#MyQuery.RecordCount#"
+	CURRENTPAGE="#CurrentPage#"
+	TEMPLATEURL="#SCRIPT_NAME#"
+	ADDEDPATH="&SearchCategory=Computers"
+	DISPLAYCOUNT="50"
+	PAGEGROUP="15"
+	IMAGEPATH="/images/"
+	IMAGEHEIGHT="15" IMAGEWIDTH="25"
+	HILIGHTCOLOR="##00FF00"&gt;
+</pre>
+
+<i>OR</i>
+
+<pre>&lt;CF_PAGETHRU TOTALRECORDS="#MyQuery.RecordCount#"
+	CURRENTPAGE="#CurrentPage#"
+	TEMPLATEURL="#SCRIPT_NAME#"
+	ADDEDPATH="&SearchCategory=Computers"
+	DISPLAYCOUNT="50"
+	PAGEGROUP="15"
+	IMAGEPATH="NONE"
+	HILIGHTCOLOR="##00FF00"
+	PREVIOUSSTR="[prev]" NEXTSTR="[next]"
+	PREVIOUSGROUPSTR="[rew]" NEXTGROUPSTR="[ff]"&gt;
+</pre>
+
+
+<a name="s6"></a>
+<h4>Sample Code</h4>
+
+<a href="CF_PageThru-sample.html">Sample code and output</a> for CF_PageThru.
+
+<a name="s7"></a>
+<h4>Hints &amp; Tips</h4>
+<ul>
+<li>If only one pageful of results is returned by a query, <CODE>PT_PageThru</CODE> will return an
+	empty string.
+<li>You can set the <CODE>TEMPLATEURL</CODE> attribute equal to the CGI variable <CODE>SCRIPT_NAME</CODE> to specify
+	the URL of the calling template  (<I><a href="#s5">See Syntax</a></I>).
+<li>CF_PageThru is defaulted to use the graphic images packaged with the CF_PageThru.  Copy
+	the graphic images into the directory of the calling template.
+<li>Set the <CODE>PAGEGROUP</CODE> attribute to 0 (zero) to turn off page grouping.  This will have the effect
+	of displaying all pages for a query in the navigation, even if there are 1000 pages.  
+<li>Be sure to set <CODE>IMAGEPATH="NONE"</CODE> when using hypertext buttons for Previous/Next and Previous Group/Next Group.
+<li>Use the <CODE>&lt;CFPARAM&gt;</CODE> to default <CODE>CurrentPage</CODE> to 1 (one) in th calling template.
+<li>Use the <CODE>ADDEDPATH</CODE> attribute to pass through any parameters needed for the query.  <CODE>ADDEDPATH</CODE> can
+	also be used to pass sorting parameters.
+</UL>
+
+
+<a name="s8"></a>
+<h4>Package Information &amp; Download</h4>
+
+<UL>
+<LI><B><I>Files:</I></B> PageThru.cfm, CF_PageThru.html, CF_PageThru-sample.html, left.gif, right.gif, lleft.gif, rright.gif<br>
+<LI><b><i>Download:</i></b> <a href="http://www.johnstons.org/wdc/pub/cfusion/customtags/archive/CF_PageThru.zip">CF_PageThru.zip</a>
+<LI>An unencrypted version of this tag is available at:
+<a href="http://www.johnstons.org/wdc/pub/cfusion/dltag.cfm">http://www.johnstons.org/wdc/pub/cfusion/dltag.cfm</a>
+</UL>
+
+<a name="support"></a>
+<h4>Support</h4>
+<p>
+Tech support can be obtained at:
+<a href="http://www.johnstons.org/wdc/pub/cfusion/support.cfm">http://www.johnstons.org/wdc/pub/cfusion/support.cfm</a>.
+</p>
+
+<p>
+Send suggestions or comments to <a href="mailto:ihuj@yahoo.com">ihuj@yahoo.com</a>.
+Submit bug reports or code modifications to <a href="mailto:ihuj@yahoo.com">ihuj@yahoo.com</a>
+with the subject line "CF_PageThru".
+</p>
+
+<a name="s9"></a>
+<h4>Version History</h4>
+<p><i>1.0.2</i><br>
+Released December 9, 2002 - Features:  Minor bug fix allowable range for <i>CurrentPage</i>.
+
+<p><i>1.0.1</i><br>
+Released 9/16/99 - Features:  Minor bug fix in returned error messages.
+
+<p><i>1.0</i><br>
+Released 6/4/99 - Features:
+<ul>
+<li>Calculates the first and last rows to be displayed in a page of a multi-page query output.
+<li>Creates a navigation bar to page-through a multi-page query output.
+</ul>
+
+
+</BODY>
+</HTML>
